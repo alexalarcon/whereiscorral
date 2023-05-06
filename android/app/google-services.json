@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "159962363590",
+    "project_id": "whereiscorral",
+    "storage_bucket": "whereiscorral.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:159962363590:android:085597cc799b87b74589c7",
+        "android_client_info": {
+          "package_name": "com.example.whereiscorral"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "159962363590-fr6jhqg523q70kfqgdt5mupv72p9t036.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9wwbtK_Bo88IGobxalhSsDr8LUPlALn0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "159962363590-fr6jhqg523q70kfqgdt5mupv72p9t036.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

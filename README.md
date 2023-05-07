@@ -15,3 +15,22 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 # whereiscorral
+
+
+Interest
+
+storage
+https://pub.dev/packages/firebase_storage/example
+
+compresor de video
+https://pub.dev/packages/video_compress
+
+login
+https://pub.dev/packages/google_sign_in/example
+
+play video
+https://docs.flutter.dev/cookbook/plugins/play-video
+https://pub.dev/packages/video_player
+maps
+https://pub.dev/packages/google_maps_flutter
+https://www.fluttercampus.com/guide/73/how-to-add-multiple-markers-on-google-map-flutter/

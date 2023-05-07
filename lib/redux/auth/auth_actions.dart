@@ -36,6 +36,23 @@ Future<void> currentUser(Store<AppState> store) async {
   }
 }
 
+Future<void> signByGoogle(Store<AppState> store) async {
+  store.dispatch(AuthStateAction(
+      AuthState(false, "", false, AuthModel(), null, {}, false)));
+  try {
+    final User? user = await Authentication.signInWithGoogle();
+    var claims = await Authentication.customClaims();
+
+    if (user != null) {
+      store.dispatch(AuthStateAction(
+          AuthState(false, "", false, AuthModel(), user, claims, false)));
+    }
+  } catch (error) {
+    store.dispatch(AuthStateAction(AuthState(
+        true, error.toString(), false, AuthModel(), null, {}, false)));
+  }
+}
+
 Future<void> authEmailPasswordAction(Store<AppState> store, String email,
     String pass, BuildContext context) async {
   try {

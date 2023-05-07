@@ -81,7 +81,7 @@ class Authentication {
     return FirebaseAuth.instance.sendPasswordResetEmail(email: email);
   }
 
-  static Future<User?> signInWithGoogle({required BuildContext context}) async {
+  static Future<User?> signInWithGoogle() async {
     FirebaseAuth auth = FirebaseAuth.instance;
     User? user;
 

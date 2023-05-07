@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:whereiscorral/pages/locations/locations.dart';
 
 import 'firebase_options.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
                   title: 'Lecturas',
                   theme: themeApp(),
                   initialRoute: (authState.user != null)
-                      ? LoginPage.routeName
+                      ? LocationsPage.routeName
                       : LoginPage.routeName,
                   routes: routes);
             }));
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
   Map<String, WidgetBuilder> get routes {
     return {
       LoginPage.routeName: (BuildContext context) => const LoginPage(),
+      LocationsPage.routeName: (BuildContext context) => const LocationsPage(),
     };
   }
 

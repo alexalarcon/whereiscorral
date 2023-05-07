@@ -146,6 +146,29 @@ class _LoginPageState extends State<LoginPage> {
                                   child: const Text('Aceptar'),
                                 ),
                               ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 50,
+                                child: ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    primary:
+                                        Theme.of(context).colorScheme.tertiary,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30.0),
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    // Navigator.pop(context);
+                                    // Respond to button press
+                                    Redux.store
+                                        .dispatch(signByGoogle(Redux.store));
+                                  },
+                                  child: const Text('Login with google'),
+                                ),
+                              ),
                             )
                           ]),
                     ),

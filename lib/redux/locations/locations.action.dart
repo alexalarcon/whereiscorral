@@ -24,7 +24,7 @@ Future<void> locationsListAction(Store<AppState> store) async {
       store.state.locationsState.locations,
       store.state.locationsState.location)));
   String? uuid = store.state.authState.user?.uid;
-  print("ASF");
+
   try {
     Stream<QuerySnapshot> collectionStream =
         FirebaseFirestore.instance.collection("locations").snapshots();
@@ -35,9 +35,7 @@ Future<void> locationsListAction(Store<AppState> store) async {
         switch (change.type) {
           case DocumentChangeType.added:
             var data = change.doc.data() as Map<String, dynamic>;
-            print(data);
             locations.add(LocationModel.fromJson(data));
-            print(data);
             store.dispatch(LocationsAction(LocationsState(
                 false, '', locations, store.state.locationsState.location)));
             break;
@@ -85,6 +83,21 @@ Future<void> locationsListAction(Store<AppState> store) async {
         store.state.locationsState.locations,
         store.state.locationsState.location)));
   }
+}
+
+Future<void> uploadSendAction(
+  Store<AppState> store,
+  id,
+) async {
+  CollectionReference collectionStream =
+      FirebaseFirestore.instance.collection("locations");
+
+  String estado = "enviado";
+  try {
+    collectionStream
+        .doc("EfRkIcs2Vss4wkpjdl9Y")
+        .update({"nombre": id.toString()});
+  } catch (error) {}
 }
 
 class IncidenceSuccessAction {

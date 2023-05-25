@@ -38,9 +38,9 @@ class LocationsPage extends StatefulWidget {
 
 class _LocationsPageState extends State<LocationsPage> {
   GoogleMapController? mapController;
-  late final Uint8List markIcons;
+  Uint8List markIcons = Uint8List.fromList([]);
   LatLng blackPosition = const LatLng(39.15022284301703, -3.017762654345716);
-
+  bool isLoad = false;
   Set<Marker> markers = {};
   @override
   void initState() {
@@ -52,12 +52,15 @@ class _LocationsPageState extends State<LocationsPage> {
 
   _asyncMethod() async {
     markIcons = await getImages("assets/images/face.png", 100);
+    isLoad = true;
     setState(() {});
   }
 
   //markers for google map
   @override
   Widget build(BuildContext context) {
+    print("markIcons");
+
     Redux.store.dispatch(locationsListAction);
     return StoreConnector<AppState, LocationsState>(
         distinct: false,
@@ -77,7 +80,9 @@ class _LocationsPageState extends State<LocationsPage> {
                   title: element.nombre,
                   snippet: 'My Custom Subtitle',
                 ),
-                icon: BitmapDescriptor.fromBytes(markIcons), //Icon for Marker
+                icon: (!isLoad)
+                    ? BitmapDescriptor.defaultMarker
+                    : BitmapDescriptor.fromBytes(markIcons), //Icon for Marker
               ));
             }
           }

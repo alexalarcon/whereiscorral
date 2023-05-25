@@ -11,6 +11,8 @@ import '../../redux/locations/locations.state.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 
+import 'addItem.dart';
+
 Future<Uint8List> getImages(String path, int width) async {
   ByteData data = await rootBundle.load(path);
   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
@@ -91,6 +93,14 @@ class _LocationsPageState extends State<LocationsPage> {
               markers: markers, //markers to show on map
               mapType: MapType.satellite, //map type
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => AddItem()));
+              },
+              tooltip: 'Increment',
+              child: const Icon(Icons.add),
+            ), // Th
             bottomNavigationBar: Visibility(
                 visible: (storeData.locations.isNotEmpty),
                 child: const BottonNavigationBarCustom()),

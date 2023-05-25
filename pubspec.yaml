@@ -42,9 +42,10 @@ dependencies:
   firebase_core: ^2.7.1
   google_maps_flutter: ^2.0.4
   google_sign_in: ^6.1.0
-  firebase_storage: ^11.1.2
-  image_picker: ^0.8.7+4
   geolocator: ^9.0.2
+  image_picker: ^0.8.7+5
+  firebase_storage: ^11.2.1
+
 
 
 

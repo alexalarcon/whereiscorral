@@ -56,7 +56,7 @@ class _LocationsPageState extends State<LocationsPage> {
   Widget build(BuildContext context) {
     print("markIcons");
 
-    Redux.store.dispatch(locationsListAction);
+    // Redux.store.dispatch(locationsListAction);
     return StoreConnector<AppState, LocationsState>(
         distinct: false,
         converter: (store) => store.state.locationsState,

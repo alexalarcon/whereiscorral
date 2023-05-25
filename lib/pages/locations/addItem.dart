@@ -2,6 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_native_image/flutter_native_image.dart';
+// import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:image_compression/image_compression.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -96,15 +99,17 @@ class _AddItemState extends State<AddItem> {
 
                     //Create a reference for the image to be stored
                     Reference referenceImageToUpload =
-                        referenceDirImages.child('name');
+                        referenceDirImages.child(file.name);
 
                     //Handle errors/success
                     try {
-                      //Store the file
-                      await referenceImageToUpload.putFile(File(file!.path));
+                      File fileCompress = await compressFile(file);
+
+                      await referenceImageToUpload.putFile(fileCompress);
                       //Success: get the download URL
                       imageUrl = await referenceImageToUpload.getDownloadURL();
                     } catch (error) {
+                      print(error);
                       //Some error occurred
                     }
                   },
@@ -139,5 +144,13 @@ class _AddItemState extends State<AddItem> {
         ),
       ),
     );
+  }
+
+  Future<File> compressFile(XFile file) async {
+    File compressedFile = await FlutterNativeImage.compressImage(
+      file.path,
+      quality: 55,
+    );
+    return compressedFile;
   }
 }

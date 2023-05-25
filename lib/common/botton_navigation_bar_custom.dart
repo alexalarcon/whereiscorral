@@ -68,24 +68,21 @@ class BottonNavigationBarCustom extends StatelessWidget {
                   {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        CupertinoPageRoute(
-                            builder: (_) => const LocationsPage()),
+                        CupertinoPageRoute(builder: (_) => LocationsPage()),
                         (route) => false),
                   },
                 if (v == 1)
                   {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const LocationsPage()),
+                        MaterialPageRoute(builder: (_) => LocationsPage()),
                         (route) => false),
                   },
                 if (v == 2)
                   {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                            builder: (_) => const LocationsPage()),
+                        MaterialPageRoute(builder: (_) => LocationsPage()),
                         (route) => false),
                   },
                 if (v == 3)
@@ -93,7 +90,7 @@ class BottonNavigationBarCustom extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const LocationsPage())),
+                            builder: (context) => LocationsPage())),
                   },
                 Redux.store.dispatch(barNavigationIndexAction(Redux.store, v)),
               },

@@ -51,7 +51,7 @@ class MyApp extends StatelessWidget {
   Map<String, WidgetBuilder> get routes {
     return {
       LoginPage.routeName: (BuildContext context) => const LoginPage(),
-      LocationsPage.routeName: (BuildContext context) => const LocationsPage(),
+      LocationsPage.routeName: (BuildContext context) => LocationsPage(),
     };
   }
 

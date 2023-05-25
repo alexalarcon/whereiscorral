@@ -41,7 +41,7 @@ class _LocationsPageState extends State<LocationsPage> {
   late final Uint8List markIcons;
   LatLng blackPosition = const LatLng(39.15022284301703, -3.017762654345716);
 
-  Set<Marker> markers = Set();
+  Set<Marker> markers = {};
   @override
   void initState() {
     super.initState();
@@ -58,13 +58,6 @@ class _LocationsPageState extends State<LocationsPage> {
   //markers for google map
   @override
   Widget build(BuildContext context) {
-    BitmapDescriptor customIcon;
-
-    BitmapDescriptor.fromAssetImage(ImageConfiguration(size: Size(12, 12)),
-            'assets/images/car-icon.png')
-        .then((d) {
-      customIcon = d;
-    });
     Redux.store.dispatch(locationsListAction);
     return StoreConnector<AppState, LocationsState>(
         distinct: false,

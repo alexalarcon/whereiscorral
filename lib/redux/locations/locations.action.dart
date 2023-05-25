@@ -24,20 +24,20 @@ Future<void> locationsListAction(Store<AppState> store) async {
       store.state.locationsState.locations,
       store.state.locationsState.location)));
   String? uuid = store.state.authState.user?.uid;
-
+  print("ASF");
   try {
-    Stream<QuerySnapshot> collectionStream = FirebaseFirestore.instance
-        .collection(uuid.toString())
-        .doc("rutas")
-        .collection("rutas")
-        .snapshots();
+    Stream<QuerySnapshot> collectionStream =
+        FirebaseFirestore.instance.collection("locations").snapshots();
     List<LocationModel> locations = [];
+    print("ENTRO");
     collectionStream.listen((event) {
       event.docChanges.asMap().forEach((index, change) {
         switch (change.type) {
           case DocumentChangeType.added:
             var data = change.doc.data() as Map<String, dynamic>;
+            print(data);
             locations.add(LocationModel.fromJson(data));
+            print(data);
             store.dispatch(LocationsAction(LocationsState(
                 false, '', locations, store.state.locationsState.location)));
             break;
@@ -45,12 +45,12 @@ Future<void> locationsListAction(Store<AppState> store) async {
             locations.asMap().forEach((index, element) {
               var d = change.doc.data() as Map<String, dynamic>;
 
-              if (element.idRuta == d["idRuta"]) {
-                locations[index] = LocationModel.fromJson(d);
+              // if (element.idRuta == d["idRuta"]) {
+              //   locations[index] = LocationModel.fromJson(d);
 
-                store.dispatch(LocationsAction(LocationsState(false, '',
-                    locations, store.state.locationsState.location)));
-              }
+              //   store.dispatch(LocationsAction(LocationsState(false, '',
+              //       locations, store.state.locationsState.location)));
+              // }
             });
 
             break;

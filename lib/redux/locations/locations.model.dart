@@ -10,28 +10,25 @@ String locationsModelToJson(List<LocationModel> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class LocationModel {
-  LocationModel(
-      {this.idRuta, this.nombre, this.numRutas, this.uuid, this.actualizacion});
+  LocationModel({this.nombre, this.location, this.numRutas, this.uuid});
 
-  String? idRuta;
   String? nombre;
+  GeoPoint? location;
   String? uuid;
-  Timestamp? actualizacion;
+  // Timestamp? actualizacion;
   int? numRutas;
 
   factory LocationModel.fromJson(Map<String, dynamic> json) => LocationModel(
-        idRuta: json["idRuta"] ?? "",
         nombre: json["nombre"] ?? "",
+        location: json["location"] ?? const GeoPoint(0, 0),
         uuid: json["uuid"] ?? "",
-        actualizacion: json["actualizacion"] ?? "",
         numRutas: json["numRutas"] ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
-        "idRuta": idRuta,
         "nombre": nombre,
+        "location": location,
         "numRutas": numRutas,
         "uuid": uuid,
-        "actualizacion": actualizacion,
       };
 }

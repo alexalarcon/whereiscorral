@@ -1,4 +1,7 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -7,16 +10,52 @@ import '../../redux/App.state.dart';
 import '../../redux/locations/locations.action.dart';
 import '../../redux/locations/locations.state.dart';
 
-class LocationsPage extends StatelessWidget {
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+
+Future<Uint8List> getImages(String path, int width) async {
+  ByteData data = await rootBundle.load(path);
+  ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+      targetHeight: width);
+  ui.FrameInfo fi = await codec.getNextFrame();
+  return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+      .buffer
+      .asUint8List();
+}
+
+class LocationsPage extends StatefulWidget {
   LocationsPage({Key? key}) : super(key: key);
   static const String routeName = 'LocationsPage';
+
+  @override
+  State<LocationsPage> createState() => _LocationsPageState();
+}
+
+class _LocationsPageState extends State<LocationsPage> {
   GoogleMapController? mapController;
+  late final Uint8List markIcons;
   LatLng blackPosition = const LatLng(39.15022284301703, -3.017762654345716);
-  Set<Marker> markers = Set(); //markers for google map
 
-// make sure to initialize before map loading
+  Set<Marker> markers = Set();
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _asyncMethod();
+    });
+  }
 
-  //contrller for Google map
+  _asyncMethod() async {
+    markIcons = await getImages("assets/images/face.png", 100);
+    setState(() {});
+  }
+
+  //markers for google map
   @override
   Widget build(BuildContext context) {
     BitmapDescriptor customIcon;
@@ -45,7 +84,7 @@ class LocationsPage extends StatelessWidget {
                   title: element.nombre,
                   snippet: 'My Custom Subtitle',
                 ),
-                icon: BitmapDescriptor.defaultMarker, //Icon for Marker
+                icon: BitmapDescriptor.fromBytes(markIcons), //Icon for Marker
               ));
             }
           }

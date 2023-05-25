@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_redux/flutter_redux.dart';
@@ -11,12 +9,7 @@ import '../../redux/locations/locations.action.dart';
 import '../../redux/locations/locations.state.dart';
 
 import 'dart:async';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 Future<Uint8List> getImages(String path, int width) async {
   ByteData data = await rootBundle.load(path);

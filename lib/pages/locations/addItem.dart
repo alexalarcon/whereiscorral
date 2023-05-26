@@ -148,6 +148,10 @@ class _AddItemState extends State<AddItem> {
     );
   }
 
+  //Comprimir video
+  // https://pub.dev/packages/video_compress/install
+  // Buscar direccion
+// https://stackoverflow.com/questions/62399236/obtain-coordinates-from-an-address-flutter
   Future<File> compressFile(XFile file) async {
     File compressedFile = await FlutterNativeImage.compressImage(
       file.path,

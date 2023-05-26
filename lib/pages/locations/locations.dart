@@ -102,7 +102,7 @@ class _LocationsPageState extends State<LocationsPage> {
               child: const Icon(Icons.add),
             ), // Th
             bottomNavigationBar: Visibility(
-                visible: (storeData.locations.isNotEmpty),
+                // visible: (storeData.locations.isNotEmpty),
                 child: const BottonNavigationBarCustom()),
           );
         });

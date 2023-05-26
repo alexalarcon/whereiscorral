@@ -10,6 +10,12 @@ import 'package:image_compression/image_compression.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
+import 'package:flutter_geocoder/geocoder.dart';
+import 'package:flutter_geocoder/model.dart';
+import 'package:flutter_geocoder/services/base.dart';
+import 'package:flutter_geocoder/services/distant_google.dart';
+import 'package:flutter_geocoder/services/local.dart';
+
 class AddItem extends StatefulWidget {
   const AddItem({Key? key}) : super(key: key);
 
@@ -20,6 +26,7 @@ class AddItem extends StatefulWidget {
 class _AddItemState extends State<AddItem> {
   TextEditingController _controllerName = TextEditingController();
   TextEditingController _controllerQuantity = TextEditingController();
+  TextEditingController _controllerLocation = TextEditingController();
 
   GlobalKey<FormState> key = GlobalKey();
 
@@ -27,6 +34,30 @@ class _AddItemState extends State<AddItem> {
       FirebaseFirestore.instance.collection('shopping_list');
 
   String imageUrl = '';
+
+  List<Address> results = [];
+
+  bool isLoading = false;
+
+  Future search() async {
+    this.setState(() {
+      this.isLoading = true;
+    });
+
+    try {
+      var results =
+          await Geocoder.local.findAddressesFromQuery(_controllerLocation.text);
+      this.setState(() {
+        this.results = results;
+      });
+    } catch (e) {
+      print("Error occured: $e");
+    } finally {
+      this.setState(() {
+        this.isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +95,49 @@ class _AddItemState extends State<AddItem> {
                   return null;
                 },
               ),
+              Column(children: <Widget>[
+                new Card(
+                  child: new Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: new Row(
+                      children: <Widget>[
+                        new Expanded(
+                          child: new TextField(
+                            controller: _controllerLocation,
+                            decoration: new InputDecoration(
+                                hintText: "Enter an address"),
+                          ),
+                        ),
+                        new IconButton(
+                            icon: new Icon(Icons.search),
+                            onPressed: () => search())
+                      ],
+                    ),
+                  ),
+                ),
+                (this.results.length > 0)
+                    ? Card(
+                        child: Column(
+                        children: [
+                          Text(this.results[0].addressLine.toString()),
+                          Text(this.results[0].coordinates.toString()),
+                          Text(this.results[0].countryName.toString()),
+                          Text(this.results[0].countryCode.toString()),
+                        ],
+                      ))
+                    : Text("NADA"),
+              ]),
+              // TextFormField(
+              //   controller: _controllerLocation,
+              //   decoration: InputDecoration(hintText: 'LOCATION'),
+              //   validator: (String? value) {
+              //     if (value == null || value.isEmpty) {
+              //       return 'Please enter the item quantity';
+              //     }
+
+              //     return null;
+              //   },
+              // ),
               IconButton(
                   onPressed: () async {
                     /*

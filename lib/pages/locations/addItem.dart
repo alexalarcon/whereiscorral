@@ -24,6 +24,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
 
+import '../../redux/App.state.dart';
+import '../../redux/locations/locations.action.dart';
+
 const kGoogleApiKey = 'AIzaSyCD9co-B7xbWxSHU5KulvIM-Z2kMjd8_SA';
 final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -75,8 +78,9 @@ class _AddItemState extends State<AddItem> {
           // Component(Component.country, "usa"),
           // Component(Component.country, "es")
         ]);
-
-    displayPrediction(p!, homeScaffoldKey.currentState);
+    if (p != null) {
+      displayPrediction(p, homeScaffoldKey.currentState);
+    }
   }
 
   void onError(PlacesAutocompleteResponse response) {
@@ -99,11 +103,6 @@ class _AddItemState extends State<AddItem> {
         apiHeaders: await const GoogleApiHeaders().getHeaders());
 
     PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
-    print(detail);
-    print(detail.result.name);
-    print(detail.result.formattedAddress);
-    print(detail.result.geometry!.location.lat);
-    print(detail.result.geometry!.location.lng);
     final lat = detail.result.geometry!.location.lat;
     final lng = detail.result.geometry!.location.lng;
 
@@ -145,19 +144,7 @@ class _AddItemState extends State<AddItem> {
                   return null;
                 },
               ),
-              TextFormField(
-                onTap: _handlePressButton,
-                controller: _controllerQuantity,
-                decoration:
-                    InputDecoration(hintText: 'Enter the quantity of the item'),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the item quantity';
-                  }
 
-                  return null;
-                },
-              ),
               Text(locationSearch.toString()),
               new Card(
                 child: new Padding(
@@ -293,20 +280,22 @@ class _AddItemState extends State<AddItem> {
                       return;
                     }
 
-                    if (key.currentState!.validate()) {
-                      String itemName = _controllerName.text;
-                      String itemQuantity = _controllerQuantity.text;
+                    // if (key.currentState!.validate()) {
+                    //   String itemName = _controllerName.text;
+                    //   String itemQuantity = _controllerQuantity.text;
 
-                      //Create a Map of data
-                      Map<String, String> dataToSend = {
-                        'name': itemName,
-                        'quantity': itemQuantity,
-                        'image': imageUrl,
-                      };
-
-                      //Add a new item
-                      _reference.add(dataToSend);
-                    }
+                    //   //Create a Map of data
+                    //   Map<String, String> dataToSend = {
+                    //     'name': itemName,
+                    //     'quantity': itemQuantity,
+                    //     'image': imageUrl,
+                    //   };
+                    //   Redux.store.dispatch(uploadSendAction(Redux.store, ""));
+                    //   Redux.store.dispatch(uploadSendAction(Redux.store, ""));
+                    //   //Add a new item
+                    //   _reference.add(dataToSend);
+                    // }
+                    Redux.store.dispatch(uploadSendAction(Redux.store, ""));
                   },
                   child: Text('Submit'))
             ],
@@ -328,46 +317,6 @@ class _AddItemState extends State<AddItem> {
     return compressedFile;
   }
 
-  checkGps() async {
-    servicestatus = await Geolocator.isLocationServiceEnabled();
-    if (servicestatus) {
-      permission = await Geolocator.checkPermission();
-
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          print('Location permissions are denied');
-        } else if (permission == LocationPermission.deniedForever) {
-          print("'Location permissions are permanently denied");
-        } else {
-          haspermission = true;
-        }
-      } else {
-        haspermission = true;
-      }
-
-      if (haspermission) {
-        setState(() {
-          //refresh the UI
-        });
-
-        getLocation();
-      }
-    } else {
-      print("GPS Service is not enabled, turn on GPS location");
-    }
-
-    setState(() {
-      //refresh the UI
-    });
-  }
-
-  bool servicestatus = false;
-  bool haspermission = false;
-  late LocationPermission permission;
-  late Position position;
-  String long = "", lat = "";
-  late StreamSubscription<Position> positionStream;
   Future<Position> _determinePosition() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -395,39 +344,5 @@ class _AddItemState extends State<AddItem> {
     Position position = await Geolocator.getCurrentPosition();
 
     return position;
-  }
-
-  getLocation() async {
-    position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    print(position.longitude); //Output: 80.24599079
-    print(position.latitude); //Output: 29.6593457
-
-    long = position.longitude.toString();
-    lat = position.latitude.toString();
-
-    setState(() {
-      //refresh UI
-    });
-
-    LocationSettings locationSettings = LocationSettings(
-      accuracy: LocationAccuracy.high, //accuracy of the location data
-      distanceFilter: 100, //minimum distance (measured in meters) a
-      //device must move horizontally before an update event is generated;
-    );
-
-    StreamSubscription<Position> positionStream =
-        Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position position) {
-      print(position.longitude); //Output: 80.24599079
-      print(position.latitude); //Output: 29.6593457
-
-      long = position.longitude.toString();
-      lat = position.latitude.toString();
-
-      setState(() {
-        //refresh UI on update
-      });
-    });
   }
 }

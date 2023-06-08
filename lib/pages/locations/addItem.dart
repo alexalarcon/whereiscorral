@@ -40,7 +40,7 @@ class _AddItemState extends State<AddItem> {
   late GoogleMapController googleMapController;
 
   final Mode _mode = Mode.overlay;
-
+  Location locationSearch = Location(lat: 0, lng: 0);
   TextEditingController _controllerName = TextEditingController();
   TextEditingController _controllerQuantity = TextEditingController();
   TextEditingController _controllerLocation = TextEditingController();
@@ -113,6 +113,8 @@ class _AddItemState extends State<AddItem> {
         position: LatLng(lat, lng),
         infoWindow: InfoWindow(title: detail.result.name)));
     print(LatLng(lat, lng));
+    _controllerLocation.text = detail.result.formattedAddress!;
+    locationSearch = detail.result.geometry!.location;
     setState(() {});
 //POSIBLE INCORPORACION
     // googleMapController
@@ -156,7 +158,7 @@ class _AddItemState extends State<AddItem> {
                   return null;
                 },
               ),
-
+              Text(locationSearch.toString()),
               new Card(
                 child: new Padding(
                   padding: const EdgeInsets.all(10.0),

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:geolocator/geolocator.dart';
 // import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -15,6 +16,16 @@ import 'package:flutter_geocoder/model.dart';
 import 'package:flutter_geocoder/services/base.dart';
 import 'package:flutter_geocoder/services/distant_google.dart';
 import 'package:flutter_geocoder/services/local.dart';
+import 'package:searchfield/searchfield.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:google_api_headers/google_api_headers.dart';
+
+const kGoogleApiKey = 'AIzaSyCD9co-B7xbWxSHU5KulvIM-Z2kMjd8_SA';
+final homeScaffoldKey = GlobalKey<ScaffoldState>();
 
 class AddItem extends StatefulWidget {
   const AddItem({Key? key}) : super(key: key);
@@ -24,6 +35,12 @@ class AddItem extends StatefulWidget {
 }
 
 class _AddItemState extends State<AddItem> {
+  Set<Marker> markersList = {};
+
+  late GoogleMapController googleMapController;
+
+  final Mode _mode = Mode.overlay;
+
   TextEditingController _controllerName = TextEditingController();
   TextEditingController _controllerQuantity = TextEditingController();
   TextEditingController _controllerLocation = TextEditingController();
@@ -45,10 +62,17 @@ class _AddItemState extends State<AddItem> {
     });
 
     try {
+      var results2 =
+          await GoogleGeocoding("AIzaSyCD9co-B7xbWxSHU5KulvIM-Z2kMjd8_SA")
+              .findAddressesFromQuery(_controllerLocation.text);
       var results =
           await Geocoder.local.findAddressesFromQuery(_controllerLocation.text);
+      Geocoder.google("AIzaSyCD9co-B7xbWxSHU5KulvIM-Z2kMjd8_SA")
+          .findAddressesFromQuery(_controllerLocation.text);
       this.setState(() {
-        this.results = results;
+        print(results2.length);
+        print(results.length);
+        this.results = results2;
       });
     } catch (e) {
       print("Error occured: $e");
@@ -57,6 +81,69 @@ class _AddItemState extends State<AddItem> {
         this.isLoading = false;
       });
     }
+  }
+
+  Future<void> _handlePressButton() async {
+    Prediction? p = await PlacesAutocomplete.show(
+        context: context,
+        apiKey: kGoogleApiKey,
+        onError: onError,
+        mode: _mode,
+        language: 'en',
+        strictbounds: false,
+        types: [""],
+        decoration: InputDecoration(
+            hintText: 'Search',
+            focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: Colors.white))),
+        components: [
+          Component(Component.country, "pk"),
+          Component(Component.country, "usa"),
+          Component(Component.country, "es")
+        ]);
+
+    displayPrediction(p!, homeScaffoldKey.currentState);
+  }
+
+  void onError(PlacesAutocompleteResponse response) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      elevation: 0,
+      behavior: SnackBarBehavior.floating,
+      backgroundColor: Colors.transparent,
+      content: Text(
+        response.errorMessage!,
+      ),
+    ));
+
+    // homeScaffoldKey.currentState!.showSnackBar(SnackBar(content: Text(response.errorMessage!)));
+  }
+
+  Future<void> displayPrediction(
+      Prediction p, ScaffoldState? currentState) async {
+    GoogleMapsPlaces places = GoogleMapsPlaces(
+        apiKey: kGoogleApiKey,
+        apiHeaders: await const GoogleApiHeaders().getHeaders());
+
+    PlacesDetailsResponse detail = await places.getDetailsByPlaceId(p.placeId!);
+    print(detail);
+    print(detail.result.name);
+    print(detail.result.formattedAddress);
+    print(detail.result.geometry!.location.lat);
+    print(detail.result.geometry!.location.lng);
+    final lat = detail.result.geometry!.location.lat;
+    final lng = detail.result.geometry!.location.lng;
+
+    markersList.clear();
+    markersList.add(Marker(
+        markerId: const MarkerId("0"),
+        position: LatLng(lat, lng),
+        infoWindow: InfoWindow(title: detail.result.name)));
+    print(LatLng(lat, lng));
+    setState(() {});
+//POSIBLE INCORPORACION
+    // googleMapController
+    //     .animateCamera(CameraUpdate.newLatLngZoom(LatLng(lat, lng), 14.0));
   }
 
   @override
@@ -84,6 +171,7 @@ class _AddItemState extends State<AddItem> {
                 },
               ),
               TextFormField(
+                onTap: _handlePressButton,
                 controller: _controllerQuantity,
                 decoration:
                     InputDecoration(hintText: 'Enter the quantity of the item'),
@@ -116,17 +204,51 @@ class _AddItemState extends State<AddItem> {
                   ),
                 ),
                 (this.results.length > 0)
-                    ? Card(
-                        child: Column(
-                        children: [
-                          Text(this.results[0].addressLine.toString()),
-                          Text(this.results[0].coordinates.toString()),
-                          Text(this.results[0].countryName.toString()),
-                          Text(this.results[0].countryCode.toString()),
-                        ],
-                      ))
+                    ? SizedBox(
+                        height: 400,
+                        child: ListView.builder(
+                          itemCount: this.results.length,
+                          itemBuilder: (context, index) {
+                            return ListTile(
+                              title: Card(
+                                  child: Column(
+                                children: [
+                                  Text(this.results[0].addressLine.toString()),
+                                  Text(this.results[0].coordinates.toString()),
+                                  Text(this.results[0].countryName.toString()),
+                                  Text(this.results[0].countryCode.toString()),
+                                ],
+                              )),
+                            );
+                          },
+                        ),
+                      )
                     : Text("NADA"),
               ]),
+              SearchField<Address>(
+                suggestions: this
+                    .results
+                    .map(
+                      (e) => SearchFieldListItem<Address>(
+                        e.addressLine.toString(),
+                        item: e,
+                        // Use child to show Custom Widgets in the suggestions
+                        // defaults to Text widget
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(e.coordinates.toString()),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
               // TextFormField(
               //   controller: _controllerLocation,
               //   decoration: InputDecoration(hintText: 'LOCATION'),

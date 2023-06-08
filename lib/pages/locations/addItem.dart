@@ -177,7 +177,22 @@ class _AddItemState extends State<AddItem> {
                           onPressed: _handlePressButton),
                       new IconButton(
                           icon: new Icon(Icons.location_on),
-                          onPressed: _handlePressButton)
+                          onPressed: () async {
+                            Position position = await _determinePosition();
+                            print(position);
+                            final coordinates = new Coordinates(
+                                position.latitude, position.longitude);
+                            var addresses = await Geocoder.local
+                                .findAddressesFromCoordinates(coordinates);
+                            var first = addresses.first;
+                            locationSearch = Location(
+                                lat: position.latitude,
+                                lng: position.longitude);
+                            _controllerLocation.text =
+                                first.addressLine.toString();
+
+                            setState(() {});
+                          })
                     ],
                   ),
                 ),
@@ -353,6 +368,34 @@ class _AddItemState extends State<AddItem> {
   late Position position;
   String long = "", lat = "";
   late StreamSubscription<Position> positionStream;
+  Future<Position> _determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+
+      if (permission == LocationPermission.denied) {
+        return Future.error("Location permission denied");
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied');
+    }
+
+    Position position = await Geolocator.getCurrentPosition();
+
+    return position;
+  }
 
   getLocation() async {
     position = await Geolocator.getCurrentPosition(

@@ -56,33 +56,6 @@ class _AddItemState extends State<AddItem> {
 
   bool isLoading = false;
 
-  Future search() async {
-    this.setState(() {
-      this.isLoading = true;
-    });
-
-    try {
-      var results2 =
-          await GoogleGeocoding("AIzaSyCD9co-B7xbWxSHU5KulvIM-Z2kMjd8_SA")
-              .findAddressesFromQuery(_controllerLocation.text);
-      var results =
-          await Geocoder.local.findAddressesFromQuery(_controllerLocation.text);
-      Geocoder.google("AIzaSyCD9co-B7xbWxSHU5KulvIM-Z2kMjd8_SA")
-          .findAddressesFromQuery(_controllerLocation.text);
-      this.setState(() {
-        print(results2.length);
-        print(results.length);
-        this.results = results2;
-      });
-    } catch (e) {
-      print("Error occured: $e");
-    } finally {
-      this.setState(() {
-        this.isLoading = false;
-      });
-    }
-  }
-
   Future<void> _handlePressButton() async {
     Prediction? p = await PlacesAutocomplete.show(
         context: context,
@@ -98,9 +71,9 @@ class _AddItemState extends State<AddItem> {
                 borderRadius: BorderRadius.circular(20),
                 borderSide: BorderSide(color: Colors.white))),
         components: [
-          Component(Component.country, "pk"),
-          Component(Component.country, "usa"),
-          Component(Component.country, "es")
+          // Component(Component.country, "pk"),
+          // Component(Component.country, "usa"),
+          // Component(Component.country, "es")
         ]);
 
     displayPrediction(p!, homeScaffoldKey.currentState);
@@ -183,48 +156,30 @@ class _AddItemState extends State<AddItem> {
                   return null;
                 },
               ),
-              Column(children: <Widget>[
-                new Card(
-                  child: new Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: new Row(
-                      children: <Widget>[
-                        new Expanded(
-                          child: new TextField(
-                            controller: _controllerLocation,
-                            decoration: new InputDecoration(
-                                hintText: "Enter an address"),
-                          ),
+
+              new Card(
+                child: new Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: new Row(
+                    children: <Widget>[
+                      new Expanded(
+                        child: new TextField(
+                          onTap: _handlePressButton,
+                          controller: _controllerLocation,
+                          decoration:
+                              new InputDecoration(hintText: "Enter an address"),
                         ),
-                        new IconButton(
-                            icon: new Icon(Icons.search),
-                            onPressed: () => search())
-                      ],
-                    ),
+                      ),
+                      new IconButton(
+                          icon: new Icon(Icons.search),
+                          onPressed: _handlePressButton),
+                      new IconButton(
+                          icon: new Icon(Icons.location_on),
+                          onPressed: _handlePressButton)
+                    ],
                   ),
                 ),
-                (this.results.length > 0)
-                    ? SizedBox(
-                        height: 400,
-                        child: ListView.builder(
-                          itemCount: this.results.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Card(
-                                  child: Column(
-                                children: [
-                                  Text(this.results[0].addressLine.toString()),
-                                  Text(this.results[0].coordinates.toString()),
-                                  Text(this.results[0].countryName.toString()),
-                                  Text(this.results[0].countryCode.toString()),
-                                ],
-                              )),
-                            );
-                          },
-                        ),
-                      )
-                    : Text("NADA"),
-              ]),
+              ),
               SearchField<Address>(
                 suggestions: this
                     .results

@@ -295,7 +295,17 @@ class _AddItemState extends State<AddItem> {
                     //   //Add a new item
                     //   _reference.add(dataToSend);
                     // }
-                    Redux.store.dispatch(uploadSendAction(Redux.store, ""));
+                    _controllerName.text;
+                    print(imageUrl);
+                    _controllerLocation.text;
+                    locationSearch;
+                    Redux.store.dispatch(uploadSendAction(Redux.store, {
+                      "name": _controllerName.text,
+                      "imagenUrl": imageUrl,
+                      "locationName": _controllerLocation.text,
+                      "lng": locationSearch.lng,
+                      "lat": locationSearch.lat
+                    }));
                   },
                   child: Text('Submit'))
             ],

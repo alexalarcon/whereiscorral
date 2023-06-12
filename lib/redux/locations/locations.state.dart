@@ -9,7 +9,7 @@ class LocationsState {
   LocationsState(this.loading, this.error, this.locations, this.location);
 
   factory LocationsState.initial() =>
-      LocationsState(false, '', const [], LocationModel());
+      LocationsState(false, '', const [], LocationModel(lat: 0, lng: 0));
 
   LocationsState copyWith({
     bool? loading,

@@ -94,7 +94,7 @@ Future<void> uploadSendAction(
 
   String estado = "enviado";
   try {
-    collectionStream.doc().set({"nombre": "PROBANDO"});
+    collectionStream.doc().set(id);
   } catch (error) {}
 }
 

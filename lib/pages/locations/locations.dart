@@ -56,7 +56,7 @@ class _LocationsPageState extends State<LocationsPage> {
   Widget build(BuildContext context) {
     print("markIcons");
 
-    // Redux.store.dispatch(locationsListAction);
+    Redux.store.dispatch(locationsListAction);
     return StoreConnector<AppState, LocationsState>(
         distinct: false,
         converter: (store) => store.state.locationsState,
@@ -65,11 +65,8 @@ class _LocationsPageState extends State<LocationsPage> {
             {
               markers.add(Marker(
                 //add marker on google map
-                markerId: MarkerId(LatLng(
-                        element.location!.latitude, element.location!.longitude)
-                    .toString()),
-                position: LatLng(element.location!.latitude,
-                    element.location!.longitude), //position of marker
+                markerId: MarkerId(LatLng(element.lat, element.lng).toString()),
+                position: LatLng(element.lat, element.lng), //position of marker
                 infoWindow: InfoWindow(
                   //popup info
                   title: element.nombre,

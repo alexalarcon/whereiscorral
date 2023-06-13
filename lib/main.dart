@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:whereiscorral/pages/Feed/feed.dart';
+import 'package:whereiscorral/pages/MyFeed/myFeed.dart';
 import 'package:whereiscorral/pages/locations/locations.dart';
 
 import 'firebase_options.dart';
@@ -52,73 +54,74 @@ class MyApp extends StatelessWidget {
     return {
       LoginPage.routeName: (BuildContext context) => const LoginPage(),
       LocationsPage.routeName: (BuildContext context) => LocationsPage(),
+      Feed.routeName: (BuildContext context) => const Feed(),
+      MyFeed.routeName: (BuildContext context) => const MyFeed(),
     };
   }
 
   ThemeData themeApp() {
-    return ThemeData(
-        fontFamily: 'Poppins',
-        splashColor: Colors.white,
-        highlightColor: const Color(0xFFF3F6FC).withOpacity(.3),
-        colorScheme: ColorScheme.fromSwatch().copyWith(
-          primary: const Color(0xFF212240),
-          secondary: const Color(0xFF62628A),
-          tertiary: const Color(0xFF3F72AF),
-          background: const Color(0xFFF3F6FC),
-          error: const Color(0xFFFF4D4D),
-        ),
-        textTheme: const TextTheme(
-          bodyText1: TextStyle(fontSize: 14.0, color: Colors.black87),
-          bodyText2: TextStyle(fontSize: 14.0, color: Color(0xFF62628A)),
-          headline1: TextStyle(
-            color: Color(0xFF212240),
-            fontSize: 24.0,
-            fontWeight: FontWeight.bold,
-            fontFamily: 'Poppins',
-          ),
-          headline2: TextStyle(
-              fontSize: 16.0, color: Color(0xFF212240), fontFamily: 'Poppins'),
-          headline3: TextStyle(
-              fontSize: 14.0, color: Color(0xFF62628A), fontFamily: 'Poppins'),
-          headline4: TextStyle(
-              color: Color(0xFF3F72AF),
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins'),
-          subtitle1: TextStyle(
-            color: Color(0xFF212240),
-            fontSize: 16.0,
-          ),
-          subtitle2: TextStyle(
-              color: Color(0xFF212240),
-              fontSize: 16.0,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'Poppins'),
-          caption: TextStyle(
-              fontFamily: 'Poppins', color: Color(0xFF212240), fontSize: 12),
-        ),
-        appBarTheme: const AppBarTheme(
-          elevation: 0,
-          centerTitle: false,
-          iconTheme: IconThemeData(color: Colors.black, size: 20),
-          titleTextStyle: TextStyle(
-              color: Colors.black, fontSize: 16, fontFamily: 'Poppins'),
-          // This removes the shadow from all App Bars.
-        ),
+    return ThemeData(fontFamily: 'Poppins');
+    // splashColor: Colors.white,
+    // highlightColor: const Color(0xFFF3F6FC).withOpacity(.3),
+    // colorScheme: ColorScheme.fromSwatch().copyWith(
+    //   primary: const Color(0xFF212240),
+    //   secondary: const Color(0xFF62628A),
+    //   tertiary: const Color(0xFF3F72AF),
+    //   background: const Color(0xFFF3F6FC),
+    //   error: const Color(0xFFFF4D4D),
+    // ),
+    // textTheme: const TextTheme(
+    //   bodyText1: TextStyle(fontSize: 14.0, color: Colors.black87),
+    //   bodyText2: TextStyle(fontSize: 14.0, color: Color(0xFF62628A)),
+    //   headline1: TextStyle(
+    //     color: Color(0xFF212240),
+    //     fontSize: 24.0,
+    //     fontWeight: FontWeight.bold,
+    //     fontFamily: 'Poppins',
+    //   ),
+    //   headline2: TextStyle(
+    //       fontSize: 16.0, color: Color(0xFF212240), fontFamily: 'Poppins'),
+    //   headline3: TextStyle(
+    //       fontSize: 14.0, color: Color(0xFF62628A), fontFamily: 'Poppins'),
+    //   headline4: TextStyle(
+    //       color: Color(0xFF3F72AF),
+    //       fontSize: 16.0,
+    //       fontWeight: FontWeight.bold,
+    //       fontFamily: 'Poppins'),
+    //   subtitle1: TextStyle(
+    //     color: Color(0xFF212240),
+    //     fontSize: 16.0,
+    //   ),
+    //   subtitle2: TextStyle(
+    //       color: Color(0xFF212240),
+    //       fontSize: 16.0,
+    //       fontWeight: FontWeight.bold,
+    //       fontFamily: 'Poppins'),
+    //   caption: TextStyle(
+    //       fontFamily: 'Poppins', color: Color(0xFF212240), fontSize: 12),
+    // ),
+    // appBarTheme: const AppBarTheme(
+    //   elevation: 0,
+    //   centerTitle: false,
+    //   iconTheme: IconThemeData(color: Colors.black, size: 20),
+    //   titleTextStyle: TextStyle(
+    //       color: Colors.black, fontSize: 16, fontFamily: 'Poppins'),
+    //   // This removes the shadow from all App Bars.
+    // ),
 
-        // textTheme: TextTheme(he),
-        tabBarTheme: const TabBarTheme(
-            labelColor: Color(0xFF3F72AF),
-            indicator: BoxDecoration(
-              border: Border(
-                bottom: BorderSide(color: Color(0xFF3F72AF)),
-              ),
-            )),
-        //https://api.flutter.dev/flutter/material/TextTheme-class.html
-        // textTheme: TextTheme(te),
-        scaffoldBackgroundColor: const Color(0xFFF3F6FC),
-        disabledColor: const Color(0xFF8C8C8C),
-        primaryIconTheme:
-            const IconThemeData(color: Color.fromARGB(255, 26, 216, 216)));
+    // // textTheme: TextTheme(he),
+    // tabBarTheme: const TabBarTheme(
+    //     labelColor: Color(0xFF3F72AF),
+    //     indicator: BoxDecoration(
+    //       border: Border(
+    //         bottom: BorderSide(color: Color(0xFF3F72AF)),
+    //       ),
+    //     )),
+    // //https://api.flutter.dev/flutter/material/TextTheme-class.html
+    // // textTheme: TextTheme(te),
+    // scaffoldBackgroundColor: const Color(0xFFF3F6FC),
+    // disabledColor: const Color(0xFF8C8C8C),
+    // primaryIconTheme:
+    //     const IconThemeData(color: Color.fromARGB(255, 26, 216, 216)));
   }
 }

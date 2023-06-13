@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
+import 'package:whereiscorral/pages/Feed/feed.dart';
+import 'package:whereiscorral/pages/MyFeed/myFeed.dart';
+import 'package:whereiscorral/pages/locations/addItem.dart';
 import 'package:whereiscorral/pages/locations/locations.dart';
 
 import '../redux/App.state.dart';
@@ -35,28 +38,28 @@ class BottonNavigationBarCustom extends StatelessWidget {
               items: const <BottomNavigationBarItem>[
                 BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.list,
+                    Icons.map,
                   ),
-                  label: 'Rutas',
+                  label: 'Mapa',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.search,
+                    Icons.add,
                   ),
-                  label: 'Buscar',
+                  label: 'Nuevo Corral',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(
-                    Icons.stay_current_landscape,
+                    Icons.feed,
                   ),
-                  label: 'Estadísticas',
+                  label: 'Feed',
                 ),
-                BottomNavigationBarItem(
-                  icon: Icon(
-                    Icons.send,
-                  ),
-                  label: 'Enviar',
-                ),
+                // BottomNavigationBarItem(
+                //   icon: Icon(
+                //     Icons.stay_current_landscape,
+                //   ),
+                //   label: 'Estadísticas',
+                // ),
               ],
               currentIndex: storeData.barNavigation.currentIndex ?? 0,
               selectedItemColor: Theme.of(context).colorScheme.tertiary,
@@ -73,25 +76,17 @@ class BottonNavigationBarCustom extends StatelessWidget {
                   },
                 if (v == 1)
                   {
-                    Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(builder: (_) => LocationsPage()),
-                        (route) => false),
+                    Navigator.push(
+                        context, MaterialPageRoute(builder: (_) => AddItem()))
                   },
                 if (v == 2)
                   {
                     Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(builder: (_) => LocationsPage()),
+                        MaterialPageRoute(builder: (_) => Feed()),
                         (route) => false),
                   },
-                if (v == 3)
-                  {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => LocationsPage())),
-                  },
+
                 Redux.store.dispatch(barNavigationIndexAction(Redux.store, v)),
               },
             ),

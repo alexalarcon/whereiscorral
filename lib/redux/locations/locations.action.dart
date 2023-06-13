@@ -29,7 +29,7 @@ Future<void> locationsListAction(Store<AppState> store) async {
     Stream<QuerySnapshot> collectionStream =
         FirebaseFirestore.instance.collection("locations").snapshots();
     List<LocationModel> locations = [];
-    print("ENTRO");
+
     collectionStream.listen((event) {
       event.docChanges.asMap().forEach((index, change) {
         switch (change.type) {

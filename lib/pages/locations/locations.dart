@@ -11,8 +11,6 @@ import '../../redux/locations/locations.state.dart';
 import 'dart:async';
 import 'dart:ui' as ui;
 
-import 'addItem.dart';
-
 Future<Uint8List> getImages(String path, int width) async {
   ByteData data = await rootBundle.load(path);
   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
@@ -24,7 +22,7 @@ Future<Uint8List> getImages(String path, int width) async {
 }
 
 class LocationsPage extends StatefulWidget {
-  LocationsPage({Key? key}) : super(key: key);
+  const LocationsPage({Key? key}) : super(key: key);
   static const String routeName = 'LocationsPage';
 
   @override
@@ -54,8 +52,6 @@ class _LocationsPageState extends State<LocationsPage> {
   //markers for google map
   @override
   Widget build(BuildContext context) {
-    print("markIcons");
-
     Redux.store.dispatch(locationsListAction);
     return StoreConnector<AppState, LocationsState>(
         distinct: false,
@@ -64,13 +60,11 @@ class _LocationsPageState extends State<LocationsPage> {
           for (var element in storeData.locations) {
             {
               markers.add(Marker(
-                //add marker on google map
                 markerId: MarkerId(LatLng(element.lat, element.lng).toString()),
                 position: LatLng(element.lat, element.lng), //position of marker
                 infoWindow: InfoWindow(
-                  //popup info
                   title: element.nombre,
-                  snippet: 'My Custom Subtitle',
+                  snippet: element.locationName,
                 ),
                 icon: (!isLoad)
                     ? BitmapDescriptor.defaultMarker
@@ -79,28 +73,27 @@ class _LocationsPageState extends State<LocationsPage> {
             }
           }
           return Scaffold(
+            appBar: AppBar(
+              leading: const Padding(
+                padding: EdgeInsets.all(12.0),
+                child: Image(
+                  image: AssetImage("assets/images/face.png"),
+                ),
+              ),
+              title: const Text("Donde esta corral"),
+            ),
             body: GoogleMap(
               //Map widget from google_maps_flutter package
               zoomGesturesEnabled: true, //enable Zoom in, out on map
               initialCameraPosition: CameraPosition(
                 //innital position in map
                 target: blackPosition, //initial position
-                zoom: 15.0, //initial zoom level
+                zoom: 7.0, //initial zoom level
               ),
               markers: markers, //markers to show on map
               mapType: MapType.satellite, //map type
             ),
-            floatingActionButton: FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) => AddItem()));
-              },
-              tooltip: 'Increment',
-              child: const Icon(Icons.add),
-            ), // Th
-            bottomNavigationBar: Visibility(
-                // visible: (storeData.locations.isNotEmpty),
-                child: const BottonNavigationBarCustom()),
+            bottomNavigationBar: const BottonNavigationBarCustom(),
           );
         });
   }

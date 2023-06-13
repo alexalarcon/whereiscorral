@@ -1,25 +1,17 @@
 import 'dart:async';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_native_image/flutter_native_image.dart';
 import 'package:geolocator/geolocator.dart';
-// import 'package:flutter_image_compress/flutter_image_compress.dart';
-import 'package:image_compression/image_compression.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:flutter_geocoder/geocoder.dart';
-import 'package:flutter_geocoder/model.dart';
-import 'package:flutter_geocoder/services/base.dart';
-import 'package:flutter_geocoder/services/distant_google.dart';
-import 'package:flutter_geocoder/services/local.dart';
-import 'package:searchfield/searchfield.dart';
 
-import 'package:flutter/material.dart';
-import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:google_api_headers/google_api_headers.dart';
@@ -47,11 +39,8 @@ class _AddItemState extends State<AddItem> {
   TextEditingController _controllerName = TextEditingController();
   TextEditingController _controllerQuantity = TextEditingController();
   TextEditingController _controllerLocation = TextEditingController();
-
+  String sortAddress = "";
   GlobalKey<FormState> key = GlobalKey();
-
-  CollectionReference _reference =
-      FirebaseFirestore.instance.collection('shopping_list');
 
   String imageUrl = '';
 
@@ -72,12 +61,8 @@ class _AddItemState extends State<AddItem> {
             hintText: 'Search',
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(20),
-                borderSide: BorderSide(color: Colors.white))),
-        components: [
-          // Component(Component.country, "pk"),
-          // Component(Component.country, "usa"),
-          // Component(Component.country, "es")
-        ]);
+                borderSide: const BorderSide(color: Colors.white))),
+        components: []);
     if (p != null) {
       displayPrediction(p, homeScaffoldKey.currentState);
     }
@@ -124,121 +109,37 @@ class _AddItemState extends State<AddItem> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add an item'),
+        title: const Text('Nuevo Corral'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Form(
           key: key,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _controllerName,
-                decoration:
-                    InputDecoration(hintText: 'Enter the name of the item'),
-                validator: (String? value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the item name';
-                  }
-
-                  return null;
-                },
-              ),
-
-              Text(locationSearch.toString()),
-              new Card(
-                child: new Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: new Row(
-                    children: <Widget>[
-                      new Expanded(
-                        child: new TextField(
-                          onTap: _handlePressButton,
-                          controller: _controllerLocation,
-                          decoration:
-                              new InputDecoration(hintText: "Enter an address"),
-                        ),
-                      ),
-                      new IconButton(
-                          icon: new Icon(Icons.search),
-                          onPressed: _handlePressButton),
-                      new IconButton(
-                          icon: new Icon(Icons.location_on),
-                          onPressed: () async {
-                            Position position = await _determinePosition();
-                            print(position);
-                            final coordinates = new Coordinates(
-                                position.latitude, position.longitude);
-                            var addresses = await Geocoder.local
-                                .findAddressesFromCoordinates(coordinates);
-                            var first = addresses.first;
-                            locationSearch = Location(
-                                lat: position.latitude,
-                                lng: position.longitude);
-                            _controllerLocation.text =
-                                first.addressLine.toString();
-
-                            setState(() {});
-                          })
-                    ],
-                  ),
-                ),
-              ),
-              SearchField<Address>(
-                suggestions: this
-                    .results
-                    .map(
-                      (e) => SearchFieldListItem<Address>(
-                        e.addressLine.toString(),
-                        item: e,
-                        // Use child to show Custom Widgets in the suggestions
-                        // defaults to Text widget
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              SizedBox(
-                                width: 10,
-                              ),
-                              Text(e.coordinates.toString()),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                    .toList(),
-              ),
-              // TextFormField(
-              //   controller: _controllerLocation,
-              //   decoration: InputDecoration(hintText: 'LOCATION'),
-              //   validator: (String? value) {
-              //     if (value == null || value.isEmpty) {
-              //       return 'Please enter the item quantity';
-              //     }
-
-              //     return null;
-              //   },
-              // ),
-              IconButton(
-                  onPressed: () async {
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _titleField(),
+                _locationField(),
+                GestureDetector(
+                  onTap: () async {
                     /*
-                * Step 1. Pick/Capture an image   (image_picker)
-                * Step 2. Upload the image to Firebase storage
-                * Step 3. Get the URL of the uploaded image
-                * Step 4. Store the image URL inside the corresponding
-                *         document of the database.
-                * Step 5. Display the image on the list
-                *
-                * */
+                          * Step 1. Pick/Capture an image   (image_picker)
+                          * Step 2. Upload the image to Firebase storage
+                          * Step 3. Get the URL of the uploaded image
+                          * Step 4. Store the image URL inside the corresponding
+                          *         document of the database.
+                          * Step 5. Display the image on the list
+                          *
+                          * */
 
                     /*Step 1:Pick image*/
                     //Install image_picker
                     //Import the corresponding library
 
                     ImagePicker imagePicker = ImagePicker();
-                    XFile? file =
-                        await imagePicker.pickImage(source: ImageSource.camera);
-                    print('${file?.path}');
+                    XFile? file = await imagePicker.pickImage(
+                        source: ImageSource.gallery);
+                    // print('${file?.path}');
 
                     if (file == null) return;
                     //Import dart:core
@@ -265,51 +166,127 @@ class _AddItemState extends State<AddItem> {
                       await referenceImageToUpload.putFile(fileCompress);
                       //Success: get the download URL
                       imageUrl = await referenceImageToUpload.getDownloadURL();
+                      setState(() {});
                     } catch (error) {
-                      print(error);
+                      log(error.toString());
                       //Some error occurred
                     }
                   },
-                  icon: Icon(Icons.camera_alt)),
-              ElevatedButton(
-                  onPressed: () async {
-                    if (imageUrl.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Please upload an image')));
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: const [
+                          Text(
+                            "Pulsa para subir multimedia",
+                            style: TextStyle(fontSize: 15.0),
+                          ),
+                          Icon(Icons.camera_alt),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                (imageUrl.isEmpty)
+                    ? Container()
+                    : Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(imageUrl),
+                          ),
+                        )),
+                ElevatedButton(
+                    onPressed: () async {
+                      if (imageUrl.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('Please upload an image')));
 
-                      return;
-                    }
+                        return;
+                      }
 
-                    // if (key.currentState!.validate()) {
-                    //   String itemName = _controllerName.text;
-                    //   String itemQuantity = _controllerQuantity.text;
-
-                    //   //Create a Map of data
-                    //   Map<String, String> dataToSend = {
-                    //     'name': itemName,
-                    //     'quantity': itemQuantity,
-                    //     'image': imageUrl,
-                    //   };
-                    //   Redux.store.dispatch(uploadSendAction(Redux.store, ""));
-                    //   Redux.store.dispatch(uploadSendAction(Redux.store, ""));
-                    //   //Add a new item
-                    //   _reference.add(dataToSend);
-                    // }
-                    _controllerName.text;
-                    print(imageUrl);
-                    _controllerLocation.text;
-                    locationSearch;
-                    Redux.store.dispatch(uploadSendAction(Redux.store, {
-                      "name": _controllerName.text,
-                      "imagenUrl": imageUrl,
-                      "locationName": _controllerLocation.text,
-                      "lng": locationSearch.lng,
-                      "lat": locationSearch.lat
-                    }));
-                  },
-                  child: Text('Submit'))
-            ],
+                      if (key.currentState!.validate()) {
+                        _controllerName.text;
+                        _controllerLocation.text;
+                        locationSearch;
+                        Redux.store.dispatch(uploadSendAction(Redux.store, {
+                          "name": _controllerName.text,
+                          "imagenUrl": imageUrl,
+                          "locationName": _controllerLocation.text,
+                          "lng": locationSearch.lng,
+                          "lat": locationSearch.lat,
+                          "insertDate": DateTime.now(),
+                          "sortAddress": sortAddress
+                        }));
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: const Text('Subir a corral'))
+              ],
+            ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Card _titleField() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: TextFormField(
+          controller: _controllerName,
+          decoration: const InputDecoration(hintText: 'Título del contenido'),
+          validator: (String? value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter the item name';
+            }
+
+            return null;
+          },
+        ),
+      ),
+    );
+  }
+
+  Card _locationField() {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              child: TextField(
+                onTap: _handlePressButton,
+                controller: _controllerLocation,
+                decoration: const InputDecoration(
+                    hintText: "Introduce donde has dejado a Corral"),
+              ),
+            ),
+            IconButton(
+                icon: const Icon(Icons.search), onPressed: _handlePressButton),
+            IconButton(
+                icon: const Icon(Icons.location_on),
+                onPressed: () async {
+                  Position position = await _determinePosition();
+                  final coordinates =
+                      Coordinates(position.latitude, position.longitude);
+                  var addresses = await Geocoder.local
+                      .findAddressesFromCoordinates(coordinates);
+                  var first = addresses.first;
+                  sortAddress = addresses.first.thoroughfare!;
+                  locationSearch =
+                      Location(lat: position.latitude, lng: position.longitude);
+                  _controllerLocation.text = first.addressLine.toString();
+
+                  setState(() {});
+                })
+          ],
         ),
       ),
     );
